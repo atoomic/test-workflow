@@ -1,0 +1,29 @@
+name: testsuite
+
+on:
+  push:
+    branches:
+      - "**"
+    tags-ignore:
+      - "*"
+  pull_request:
+
+jobs:
+
+  check_extended_testing:
+    name: "EXTENDED_TESTING set?"
+    runs-on: ubuntu-latest
+
+    steps:
+      # --------------------------------------------------------------------------------------------
+      # cannot use secrets earlier as part of 'if:' condition
+      - name: "Runs if EXTENDED_TESTING is set"
+        env:
+          EXTENDED_TESTING: ${{ secrets.EXTENDED_TESTING }}      
+        run: |
+          if [ -z "${EXTENDED_TESTING}" ]; then
+            echo "[Warning] Only run this job when secrets.EXTENDED_TESTING is set. Stopping."
+            exit 78
+          fi          
+      # --------------------------------------------------------------------------------------------
+      - run: echo "Done"
